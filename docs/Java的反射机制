@@ -1,0 +1,115 @@
+1、反射机制:
+	所谓的反射机制就是java语言在运行时拥有一项自观的能力。通过这种能力可以彻底的了解自身的情况为下一步的动作做准备。
+2、Java的反射机制的实现要借助于4个类：
+	class，Constructor，Field，Method；
+	class代表的时类对象，
+	Constructor－类的构造器对象，
+	Field－类的属性对象，
+	Method－类的方法对象。
+	通过这四个对象我们可以粗略的看到一个类的各个组成部分。
+	Class：程序运行时，java运行时系统会对所有的对象进行运行时类型的处理。这项信息记录了每个对象所属的类，
+	虚拟机通常使用运行时类型信息选择正确的方法来执行。但是这些信息我们怎么得到啊，就要借助于class类对象了啊。
+	在Object类中定义了getClass()方法。我们可以通过这个方法获得指定对象的类对象。然后我们通过分析这个对象就
+	可以得到我们要的信息了。
+	比如：ArrayList arrayList;Class clazz = arrayList.getClass();然后我来处理这个对象clazz。
+	当然了Class类具有很多的方法，这里重点将和Constructor，Field，Method类有关系的方法。
+3、Reflection 是 Java 程序开发语言的特征之一，它允许运行中的 Java 程序对自身进行检查，或者说“自审”，
+	并能直接操作程序的内部属性。Java 的这一能力在实际应用中也许用得不是很多，但是个人认为要想对java有个
+	更加深入的了解还是应该掌握的。
+4、反射机制的优点与缺点
+	为什么要用反射机制？直接创建对象不就可以了吗，这就涉及到了动态与静态的概念
+	静态编译：在编译时确定类型，绑定对象,即通过。
+	动态编译：运行时确定类型，绑定对象。动态编译最大限度发挥了java的灵活性，体现了多态的应用，有以降低类之间的藕合性。
+	优点：
+		可以实现动态创建对象和编译，体现出很大的灵活性，特别是在J2EE的开发中它的灵活性就表现的十分明显。
+		比如，一个大型的软件，不可能一次就把把它设计的很完美，当这个程序编译后，发布了，当发现需要更新某些功能
+		时，我们不可能要用户把以前的卸载，再重新安装新的版本，假如这样的话，这个软件肯定是没有多少人用的。
+		采用静态的话，需要把整个程序重新编译一次才可以实现功能的更新，而采用反射机制的话，它就可以不用卸载，
+		只需要在运行时才动态的创建和编译，就可以实现该功能。
+	缺点：
+		对性能有影响。使用反射基本上是一种解释操作，我们可以告诉JVM，我们希望做什么并且它满足我们的要求。
+		这类操作总是慢于只直接执行相同的操作。
+	a．检测类：
+		reflection的工作机制
+		考虑下面这个简单的例子，让我们看看 reflection 是如何工作的。
+		import java.lang.reflect.*;
+		public class DumpMethods {
+			public static void main(String args[]) {
+				try {
+					Class c = Class.forName(args[0]);
+					Method m[] = c.getDeclaredMethods();
+					for (int i = 0; i < m.length; i++)
+						System.out.println(m[i].toString());
+				} catch (Throwable e) {
+				System.err.println(e);
+				}
+			}
+		}
+	按如下语句执行：
+	java DumpMethods java.util.ArrayList
+	这个程序使用 Class.forName 载入指定的类，然后调用 getDeclaredMethods 来获取这个类中定义了的方法列表。
+	java.lang.reflect.Methods 是用来描述某个类中单个方法的一个类。
+	Java类反射中的主要方法
+	对于以下三类组件中的任何一类来说 -- 构造函数、字段和方法
+	-- java.lang.Class 提供四种独立的反射调用，以不同的方式来获得信息。调用都遵循一种标准格式。
+	以下是用于查找构造函数的一组反射调用：
+		Constructor getConstructor(Class[] params) -- 获得使用特殊的参数类型的公共构造函数，
+		Constructor[] getConstructors() -- 获得类的所有公共构造函数
+		Constructor getDeclaredConstructor(Class[] params) -- 获得使用特定参数类型的构造函数(与接入级别无关)
+		Constructor[] getDeclaredConstructors() -- 获得类的所有构造函数(与接入级别无关)
+	获得字段信息的Class 反射调用不同于那些用于接入构造函数的调用，在参数类型数组中使用了字段名：
+		Field getField(String name) -- 获得命名的公共字段
+		Field[] getFields() -- 获得类的所有公共字段
+		Field getDeclaredField(String name) -- 获得类声明的命名的字段
+		Field[] getDeclaredFields() -- 获得类声明的所有字段
+	用于获得方法信息函数：
+		Method getMethod(String name, Class[] params) -- 使用特定的参数类型，获得命名的公共方法
+		Method[] getMethods() -- 获得类的所有公共方法
+		Method getDeclaredMethod(String name, Class[] params) -- 使用特写的参数类型，获得类声明的命名的方法
+		Method[] getDeclaredMethods() -- 获得类声明的所有方法
+	使用 Reflection：
+		用于 reflection 的类，如 Method，可以在 java.lang.relfect 包中找到。使用这些类的时候必须要遵循三个步骤：
+		第一步是获得你想操作的类的 java.lang.Class 对象。
+		在运行中的 Java 程序中，用 java.lang.Class 类来描述类和接口等。
+	下面就是获得一个 Class 对象的方法之一：
+		Class c = Class.forName("java.lang.String");
+	这条语句得到一个 String 类的类对象。还有另一种方法，如下面的语句：
+		Class c = int.class;
+		或者
+		Class c = Integer.TYPE;
+	它们可获得基本类型的类信息。其中后一种方法中访问的是基本类型的封装类 (如 Intege ) 中预先定义好的 TYPE 字段。
+	第二步是调用诸如 getDeclaredMethods 的方法，以取得该类中定义的所有方法的列表。
+	一旦取得这个信息，就可以进行第三步了——使用 reflection API 来操作这些信息，如下面这段代码：
+		Class c = Class.forName("java.lang.String");
+		Method m[] = c.getDeclaredMethods();
+		System.out.println(m[0].toString());
+	它将以文本方式打印出 String 中定义的第一个方法的原型。
+	处理对象：
+		a.创建一个Class对象
+		b.通过getField 创建一个Field对象
+		c.调用Field.getXXX(Object)方法(XXX是Int,Float等，如果是对象就省略；Object是指实例).
+	例如：
+		import java.lang.reflect.*;
+		import java.awt.*;
+		class SampleGet {
+			public static void main(String[] args) {
+				Rectangle r = new Rectangle(100, 325);
+				printHeight(r);
+			}
+			static void printHeight(Rectangle r) {
+				Field heightField;
+				Integer heightValue;
+				Class c = r.getClass();
+				try {
+					heightField = c.getField("height");
+					heightValue = (Integer) heightField.get(r);
+					System.out.println("Height: " + heightValue.toString());
+				} catch (NoSuchFieldException e) {
+					System.out.println(e);
+				} catch (SecurityException e) {
+					System.out.println(e);
+				} catch (IllegalAccessException e) {
+					System.out.println(e);
+				}
+			}
+		}
