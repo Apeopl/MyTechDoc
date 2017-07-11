@@ -1,0 +1,38 @@
+一、SQL执行过程
+	1、用户连接数据库，执行SQL语句；
+	2、先在内存进行内存读，找到了所需数据就直接交给用户工作空间；
+	3、内存读失败，也就说在内存中没找到支持SQL所需数据，就进行物理读，也就是到磁盘中查找；
+	4、找到的数据放到内存中，在内存进行数据过滤再放到会话工作空间。
+	5、假设会话工作空间需要暂存结果集进行排序，但空间不足的话，就会借用磁盘tmpdir，最后再将结果返回给用户。
+	注：
+		用户会话空间是内存中分配出来的一个工作空间，而innodb_buffer_pool是innodb存储引擎在内存中的一个缓冲池。
+		一个SQL执行速度快并不能说明这个SQL没有性能问题，SQL性能不是一定需要利用并发来测试，主要是看其资源消耗点。
+二、影响SQL执行几个资源消耗点(最底层理论依据)：
+	1、用户连接线程建立
+	2、物理读，I/O慢
+	3、内存读，消耗CPU
+	4、磁盘排序
+	5、数据传输，网络消耗
+三、判断一个SQL的性能执行优劣
+	根据SQL执行的资源消耗点来进行判断。
+	1、如何判断是否出现连接建立
+		mysql> show global status like 'Threads_created';
+	2、如何判断是否出现物理读
+		mysql> show global status like 'Innodb%read%'; 
+		关注点：
+			(1)、Innodb_buffer_pool_reads：innodb物理读的次数
+			(2)、Innodb_data_reads：物理读IO请求次数
+			(3)、Innodb_pages_read：物理读page的总数
+	3、如何判断是否出现过量内存读(比值)
+		mysql> show global status like 'Innodb_rows_read';
+		Innodb_rows_read：实际上的内存读的数量，也就是实际上需要访问的数据量(返回的数据量)
+	4、如何判断是否出现磁盘排序
+		mysql> show global status like 'sort_merge_passes';
+		sort_merge_passes：必须要做归并排序的次数
+	5、如何查看网络传输量
+		mysql> show global status like '%bytes%'; 
+四、关于磁盘排序
+	客户端一个用户连接到服务器MySQL数据库，系统为该用户启动一个用户会话，数据库开启一个用户连接线程，
+	并根据配置参数在内存中为该用户分配用户工作空间。如果读取的数据结果集要进行排序处理，而用户工作空间不够用的话，
+	就会向磁盘借用空间，磁盘排序。
+		mysql> show variables like 'tmpdir'; 
