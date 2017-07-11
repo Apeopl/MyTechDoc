@@ -1,0 +1,155 @@
+1、搜索
+	在vi和vim中如果打开一个很大的文件，不容易找到对应的内容，可以使用自带的搜索关键字进行搜索定位：
+	在vi和vim界面中输入:"/"(反斜杠)，之后会出现一个输入框让你输入，当你输入的关键字在文件中存在就会以高亮的形式
+	显示出来，之后按回车就确定定位到当前高亮位置，如果不是你要找的，则可以按："n"，意即寻找下一个输入关键字的内容。
+2、vim恢复以及乱码问题
+	(1) 在vi和vim中如果不小心误删除了一些东西，想要恢复怎么办
+		首先要退出编辑状态，即按Esc键，之后再按u撤销之前的修改的内容。
+	(2) 在用vi或vim打开一个文件的时候，如果有些地方出现一些特殊符号或是乱码，可以通过以下命令尝试：
+		vim -b mytest.txt(其中-b一般是用来查看对应的二进制文件的)	
+3、管道命令，即竖杠-->'|'
+	上面的意思是：将查询出来的内容交给管道后面的命令装饰之后再展示出来
+		例如：cat install.log | more (more的意思是将一屏放不下的内容以分页的形式显示)
+		ls -l /etc | more
+	如果想看上一页的内容，可以通过：Shift + PageUp 来查看
+	管道配合grep(过滤)可以达到很好用的组合例如：
+		cat -n hello.txt | grep "hello" (查看hello.txt文件内容，并过滤出来带有hello的内容) ,
+		-n 表示显示出来第几行的内容
+4、find 搜寻文件或目录
+	find /home -name hello* (查找home目录下的文件名或目录为hello的)
+	find / -name h?m* (在跟目录下查找h开头第二个字符是任意的，第三个是m，后面的是任意的字符)
+	find / -size +1000000k (表示在根目录下查询文件大于1000000K的文件)		
+5、字符串替换命令
+	:s/well/good/替换当前行第一个well 为 good
+	:s/well/good/g 替换当前行所有well 为 good
+	:n,$s/well/good/ 替换第 n 行开始到最后一行中每一行的第一个 well 为 good
+	:n,$s/well/good/g 替换第 n 行开始到最后一行中每一行所有 well 为 good
+	n 为数字，若 n 为 .，表示从当前行开始到最后一行
+	:%s/well/good/ (等同于 :g/well/s//good/) 替换每一行的第一个 well 为 good
+	:%s/well/good/g (等同于 :g/well/s//good/g) 替换每一行中所有 well 为 good
+	特殊符号转义：可以使用#作为分隔符，此时中间出现的 / 不会作为分隔符	
+	:s#well/#good/# 替换当前行第一个 well/ 为 good/
+	:%s#/usr/bin#/bin#g可以把文件中所有路径/usr/bin换成/bin	
+6、重定向命令
+	ls -l /etc/ 希望
+	ls -l /etc > /home/myback.txt (覆盖重定向)把显示的结果覆盖到/home/myback.txt中去
+	ls -l /etc >> /home/myback.txt (追加重定向)把显示的结果追加到/home/myback.txt中去	
+7、删除多行
+	删除多行步骤如下：
+		(1). 首先要显示对应的行数这样方能知道从第几行到第几行删除
+		: set nu	
+		(2). 按Esc键退出，在命令行中输入：190,6233d(即[190 , 6233]都删除掉)
+		如果想要情况整个文件内容，在直接运行以下命令：
+		清空文件内容：> log.txt	
+8、行位定位
+	直接定位到最后一行：
+		按Esc键退出，在命令行中输入： G
+	直接定位到第一行：
+		按Esc键退出，在命令行中输入： 1 G
+	直接定位到某一行：(第17行)
+		按Esc键退出，在命令行中输入：17 G
+9. 复制一行或多行
+	(1). 复制一行
+		yy 复制当前行
+		p 粘贴
+	(2). 复制多行
+		7yy从当前行开始复制7行
+		p 粘贴
+10. Linux中查看java的版本
+	java -v
+11、grep 的用法
+	(1). 显示匹配的后n行 (after)
+		grep -A n
+	(2). 显示匹配的前n行 (before)
+		grep -B n
+	(3). 显示匹配的前后n行 (context)
+		grep -C n
+	(4). 忽略大小写
+		grep -i str		
+12、ll或ls显示说明
+	ll -ht (h会按照标准格式自动转换大小即：456M，1.2G等，t 表示显示内容按照时间倒序排列)
+	应用案例：
+		清空8月份的日志文件：rm -rf `ll -ht | awk '/8月/ {print6,6,NF}' | awk '{print $NF}'`
+		说明：awk '/pattern/action'--> awk '/8月/{print6,6,NF}'，
+			只显示第六行与最后一行的内容且只保留8月的列表内容显示。
+	ls中文件颜色的显示代表的意义为：
+	1.蓝色--> 目录
+	2.绿色--> 可执行文件
+	3.红色--> 压缩文件
+	4.浅蓝色--> 链接文件
+	5.灰色--> 其他文件
+13、查看某文件被哪个进程所占用
+	lsof 文件名
+14、创建用户以及查看当前用户
+	useradd redis
+	如果是Ubuntu系统则需要使用如下命令：
+		useradd openstack -m -s /bin/bash
+	查看当前系统存在的用户组和用户
+		/etc/group文件包含所有组
+		/etc/shadow和/etc/passwd系统存在的所有用户名
+15、常用查看文件大小与Linux系统命令
+	查看内存使用情况： free -m (m为MB，g为GB)
+	查看对应磁盘使用情况： df -lh
+	查看对应CPU使用情况： cat /proc/cpuinfo
+	或者有更牛逼的命令：
+		cat /proc/cpuinfo | grep "model name" | head -1(只显示一行对应的CPU型号以及其他信息)
+		cat /proc/cpuinfo | grep "model name"(系统有几个核就会显示几行)
+		cat /proc/cpuinfo | grep "model name" | wc -l(统计出一共有多少核)
+	查看对应服务器版本当前操作系统发行版信息： cat /etc/issue 或 cat /etc/redhat-release
+	查看更为底层的版本信息： cat /proc/version 
+		(例如：CentOS实际最根源为RetHat，此命令将会显示所采用RetHat的版本)
+	如果想查看某个文件夹当前所占用的空间使用：
+		du -h node (cd /data/solr-4.8.0/)
+	如果想查看当前目录下的所有文件各个大小
+		du -sh * (cd /)		
+16、查看内存情况
+	(1). jstat -gc pid 可以看到对应各个内存大小、使用状况以及GC处理情况
+	(2). jmap -heap [pid] 查看内存分布
+	(3). jstat -gcutil [pid] 1000 每隔1s输出java进程的gc情况		
+17、修改文件夹及其里面的内容的权限
+	chown -R solr:solr /home/solr/lib
+		意思是将 /home/solr/lib 文件夹及其里面内容的用户所属权限修改为solr用户所属权限		
+18、查看某个端口链接状态的连接数
+	netstat -nlap | grep -i est | grep -i 6379 | awk '{print $4}'
+		使用此命令如果实在记不住后面参数有哪些，那么直接记住为：-nlap 即可，大部分情况都可以满足我们的需求
+	netstat常见参数如下：
+		-a (all)显示所有选项，默认不显示LISTEN相关
+		-t (tcp)仅显示tcp相关选项
+		-u (udp)仅显示udp相关选项
+		-n 拒绝显示别名，能显示数字的全部转化成数字。
+		-l 仅列出有在 Listen (监听) 的服務状态
+		-p 显示建立相关链接的程序名
+		-r 显示路由信息，路由表
+		-e 显示扩展信息，例如uid等
+		-s 按各个协议进行统计
+		-c 每隔一个固定时间，执行该netstat命令。
+	提示：LISTEN和LISTENING的状态只有用-a或者-l才能看到
+	grep -i(i表示忽略大小写)
+	awk '{print $4}'(表示只打印第4列)
+	grep -i est(est表示：ESTABLISHED，即只显示ESTABLISHED即连接状态的端口)
+	grep命令最后的那个显示出来的结果以它进行标红，即最后一个grep为：grep -i 6379， 
+	那么打印出来的结果其中的6379标红。
+19、同步服务器的时间
+	ntpdate pool.ntp.org
+		将这个命令启用为定时脚本执行，具体如下所示：
+		1 */2 * * * ntpdate pool.ntp.org	
+20、不允许ssh登录如何配置
+	修改vim /etc/sysconfig/sshd_config文件，增加一行：AllowUsers solr
+	使其生效运行如下命令：
+	service sshd reload
+	常用系统级配置总结：
+		(1). 限制登录：/etc/ssh/sshd_config 修改后需重启：service sshd restart
+		(2). 用户配置：/etc/passwd
+		(3). sudo权限：/etc/sudoers			
+21、常用JDK系统环境变量配置
+	(1)JAVA_HOME=/usr/java/jdk1.7.0_55
+	(2)CLASSPATH=.:$JAVA_HOME/lib.tools.jar
+	(3)PATH=$JAVA_HOME/bin:$PATH
+	(4)exportJAVA_HOME CLASSPATH PATH		
+22、查看Redis/Tomcat的版本
+	redis-cli info | grep 'redis_version'
+	tomcat版本需要进入到安装目录下的 bin/ 文件夹：
+	./version.sh或者sh version.sh	
+23、怎么看linux的防火墙是否阻止80端口
+	1iptables -vnL |grep":80 "
+	返回有内容说明开通，没返回内容，则说明阻。
