@@ -1,0 +1,32 @@
+1、什么是注解
+	注解也叫元数据，例如我们常见的@Override和@Deprecated，注解是JDK1.5版本开始引入的一个特性，
+	用于对代码进行说明，可以对包、类、接口、字段、方法参数、局部变量等进行注解。它主要的作用有以下四方面：
+		a.生成文档，通过代码里标识的元数据生成javadoc文档。
+		b.编译检查，通过代码里标识的元数据让编译器在编译期间进行检查验证。
+		c.编译时动态处理，编译时通过代码里标识的元数据动态处理，例如动态生成代码。
+		d.运行时动态处理，运行时通过代码里标识的元数据动态处理，例如使用反射注入实例。
+	一般注解可以分为三类：
+	一类是Java自带的标准注解，包括@Override、@Deprecated和@SuppressWarnings，分别用于标明重写某个方法、标明某个类
+	或方法过时、标明要忽略的警告，用这些注解标明后编译器就会进行检查。
+	一类为元注解，元注解是用于定义注解的注解，包括@Retention、@Target、@Inherited、@Documented，@Retention用于
+	标明注解被保留的阶段，@Target用于标明注解使用的范围，@Inherited用于标明注解可继承，@Documented用于标明是否
+	生成javadoc文档。
+	一类为自定义注解，可以根据自己的需求定义注解，并可用元注解对自定义注解进行注解。 
+2、注解的原理
+	从java源码到class字节码是由编译器完成的，编译器会对java源码进行解析并生成class文件，而注解也是在编译时
+	由编译器进行处理，编译器会对注解符号处理并附加到class结构中，根据jvm规范，class文件结构是严格有序的格式，
+	唯一可以附加信息到class结构中的方式就是保存到class结构的attributes属性中。
+	我们知道对于类、字段、方法，在class结构中都有自己特定的表结构，而且各自都有自己的属性，而对于注解，
+	作用的范围也可以不同，可以作用在类上，也可以作用在字段或方法上，这时编译器会对应将注解信息存放到类、字段、方法
+	自己的属性上。
+	在我们的AnnotationTest类被编译后，在对应的AnnotationTest.class文件中会包含一个RuntimeVisibleAnnotations属性，
+	由于这个注解是作用在类上，所以此属性被添加到类的属性集上。即Test注解的键值对value=test会被记录起来。
+	而当JVM加载AnnotationTest.class文件字节码时，就会将RuntimeVisibleAnnotations属性值保存到AnnotationTest
+	的Class对象中，于是就可以通过AnnotationTest.class.getAnnotation(Test.class)获取到Test注解对象，
+	进而再通过Test注解对象获取到Test里面的属性值。
+	这里可能会有疑问，Test注解对象是什么？其实注解被编译后的本质就是一个继承Annotation接口的接口，
+	所以@Test其实就是“public interface Test extends Annotation”，
+	当我们通过AnnotationTest.class.getAnnotation(Test.class)调用时，
+	JDK会通过动态代理生成一个实现了Test接口的对象，并把将RuntimeVisibleAnnotations属性值设置进此对象中，
+	此对象即为Test注解对象，通过它的value()方法就可以获取到注解值。
+	Java注解实现机制的整个过程如上面所示，它的实现需要编译器和JVM一起配合。
