@@ -1,0 +1,11 @@
+一、简介
+	Netty是一个非阻塞、事件驱动的网络框架。Netty实际上是使用Threads(多线程)来处理I/O,
+
+二、核心组件
+	1.BootStrap与ServerBootStrap
+		Netty的应用程序通过设置bootstrap(引导)类的开始，提供一个用于应用程序网路层配置的容器。
+	2.Channel
+	3.ChannelHandler
+	4.ChannelPipeLine
+	5.EventLoop
+	6.ChannelFuture
