@@ -1,0 +1,11 @@
+一、什么是Nginx？
+	1.Nginx是十分轻量级的HTTP服务器，Nginx，它的发音为“engine X”，
+	是一个高性能的HTTP和反向代理服务器，同时也是一个IMAP/POP3/SMTP 代理服务器。
+	2.Nginx以事件驱动的方式编写，所以有非常好的性能，同时也是一个非常高效的反向代理、负载平衡。
+二、Nginx优势
+	nginx做为HTTP服务器，有以下几项基本特性：
+		1.处理静态文件，索引文件以及自动索引；打开文件描述符缓冲
+		2.无缓存的反向代理加速，简单的负载均衡和容错
+		3.FastCGI，简单的负载均衡和容错
+		4.模块化的结构。包括gzipping, byte ranges, chunked responses,以及 SSI-filter等filter。如果由FastCGI或其它代理服务器处理单页中存在的多个SSI，则这项处理可以并行运行，而不需要相互等待
+		5.支持SSL 和 TLSSNI
