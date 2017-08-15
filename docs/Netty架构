@@ -1,5 +1,6 @@
 一、简介
-	Netty是一个非阻塞、事件驱动的网络框架。Netty实际上是使用Threads(多线程)来处理I/O,
+	Netty是一个非阻塞、事件驱动的网络框架。Netty实际上是使用Threads(多线程)来处理I/O事件,Netty的设计保证
+	程序处理事件不会有同步。
 
 二、核心组件
 	1.BootStrap与ServerBootStrap
