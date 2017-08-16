@@ -1,0 +1,38 @@
+一、挂载
+	1.当在硬盘上创建了一个分区并将其格式化成某一文件系统之后，也无法立即将数据（程序）存储在这个文件系统上。
+	在使用这个文件系统之前，必须先将这个分区挂载到Linux系统上，也就是将这个分区挂载到 Linux 文件系统的
+	某个目录上。
+	2.挂载的概念是：当要使用某个设备时，例如，光盘或软盘，必须先将它们对应到Linux系统中的某个目录上，而这个对应
+	的目录就叫挂载点（mount_point）。只有经过这样的对应操作后，用户或程序才能访问到这些设备。
+	而这个操作的过程就叫设备（文件系统）的挂载。硬盘的分区在使用之前也必须挂载，例如当你要使用已经格式化的
+	分区 /dev/sda6 时，也要先将这个分区挂载到Linux系统上。
+	3.举个例子：
+		root@localhost:~# mkdir /zjl
+		#创建 oracle 子目录
+		root@localhost:~# mount /dev/sda1 /zjl
+		#将 /dev/sda1 分区挂载到 /zjl 目录上
+		root@localhost:~# mount
+		#列出目前挂载在系统上的所有文件系统
+		……
+		/dev/sda1 on /zjl type ext4 (rw,relatime,errors=remount-ro,data=ordered)
+		从显示结果可知： /dev/sda1 分区已经被挂载到 /zjl 目录上，该分区的文件类型是 ext4 ，而且这个文件系统
+		的状态是可读可写。也可以使用带有 -h 选项的 df 命令列出目前系统中所有已挂载的分区的相关信息：
+		root@localhost:~# df -h
+		文件系统 容量 已用 可用 已用% 挂载点
+		/dev/sda1 14G 8.0G 5.3G 61% /
+		……
+二、卸载
+	1.可以使用 umount 命令（unmount的缩写）命令卸载 /zjl 上的文件系统了，系统执行完以上 umount 命令之后不会给出
+	任何信息，同样用mount 命令检查一下：
+		root@localhost:~# umount /zjl
+	2.使用分区的label来挂载文件系统
+		root@localhost:~# e2label /dev/sda1
+		root@localhost:~# e2label /dev/sda1 /zjl
+		#将/dev/sda1 分区的label设定为 /zjl
+		root@localhost:~# mount -L /zjl /zjl
+		#这里紧跟在 -L 参数之后的 /zjl 为 /dev/sda1 分区的label ，而最后的 /zjl 为挂载点（目录）。
+		系统执行完以上 mount 命令不会给出任何信息，可以使用 mount 命令查看，也可以使用带有 -h 选项的 df 命令。
+三 、说明
+	其实，硬盘分区挂载和卸载的概念源自UNIX ，UNIX 系统一般是作为服务器使用的，这样安全就是一个必须面对的大问题，
+	特别是在网络上。最简单有效的方法就是不使用的硬盘分区不挂载，因为没有挂载的硬盘分区是无法访问的。这样系统就
+	更安全了。同时这样也可以减少挂载的硬盘分区数量，实际上就是减少了维护文件的规模，减少了系统的开销，提高了效率。
